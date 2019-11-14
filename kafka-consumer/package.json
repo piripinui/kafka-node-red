@@ -1,0 +1,19 @@
+{
+  "name": "kafka-consumer",
+  "version": "1.0.0",
+  "description": "Node-red node for consuming messages from a Kafka topic",
+  "main": "kafka-consumer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Phil Robinson",
+  "license": "MIT",
+  "dependencies": {
+    "kafkajs": "^1.11.0"
+  },
+  "node-red": {
+    "nodes": {
+      "kafka-consumer": "kafka-consumer.js"
+    }
+  }
+}

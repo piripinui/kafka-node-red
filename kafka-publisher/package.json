@@ -1,0 +1,19 @@
+{
+  "name": "kafka-publisher",
+  "version": "1.0.0",
+  "description": "Node-red node for publishing messages to Kafka topics",
+  "main": "kafka-publisher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Phil Robinson",
+  "license": "MIT",
+  "dependencies": {
+    "kafkajs": "^1.11.0"
+  },
+  "node-red": {
+    "nodes": {
+      "kafka-node-publisher": "kafka-publisher.js"
+    }
+  }
+}

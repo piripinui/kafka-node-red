@@ -1,0 +1,46 @@
+<script type="text/javascript">
+    RED.nodes.registerType('kafka-consumer',{
+        category: 'network',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            kafkahost: { value: "localhost" },
+            kafkaport: { value: "29092" },
+            kafkatopic: { value: "mytopic" },
+            kafkagroupId: {  value: "test-group" }
+        },
+        inputs:0,
+        outputs:1,
+        icon: "kafka-icon.png",
+        label: function() {
+            return this.name || 'kafka-consumer';
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="kafka-consumer">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkahost"><i class="icon-tag"></i> Kafka Host</label>
+        <input type="text" id="node-input-kafkahost" placeholder="localhost">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkaport"><i class="icon-tag"></i> Kafka Port</label>
+        <input type="text" id="node-input-kafkaport" placeholder="29092">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkatopic"><i class="icon-tag"></i> Kafka Topic</label>
+        <input type="text" id="node-input-kafkatopic" placeholder="Kafka topic string">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkagroupId"><i class="icon-tag"></i> Kafka Group ID</label>
+        <input type="text" id="node-input-kafkagroupId" placeholder="test-group">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="kafka-consumer">
+    <p>A Kafka consumernode that listens for incoming messages from the defined Kafka topic</p>
+</script>

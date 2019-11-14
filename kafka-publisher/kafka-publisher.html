@@ -1,0 +1,41 @@
+<script type="text/javascript">
+    RED.nodes.registerType('kafka-publisher',{
+        category: 'network',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            kafkahost: { value: "localhost" },
+            kafkaport: { value: "29092" },
+            kafkatopic: { value: "mytopic" }
+        },
+        inputs:1,
+        outputs:0,
+        icon: "kafka-icon.png",
+        label: function() {
+            return this.name || 'kafka-publisher';
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="kafka-publisher">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkahost"><i class="icon-tag"></i> Kafka Host</label>
+        <input type="text" id="node-input-kafkahost" placeholder="localhost">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkaport"><i class="icon-tag"></i> Kafka Port</label>
+        <input type="text" id="node-input-kafkaport" placeholder="29092">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkatopic"><i class="icon-tag"></i> Kafka Topic</label>
+        <input type="text" id="node-input-kafkatopic" placeholder="Kafka topic string">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="kafka-publisher">
+    <p>A Kafka producer node that publishes incoming messages to the defined Kafka topic</p>
+</script>

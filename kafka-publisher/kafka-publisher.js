@@ -1,0 +1,40 @@
+const { Kafka } = require('kafkajs');
+
+module.exports = function(RED) {
+    function pushData(config) {
+        RED.nodes.createNode(this, config);
+
+        var node = this;
+
+        node.kafkahost = config.kafkahost;
+        node.kafkaport = config.kafkaport;
+        node.kafkatopic = config.kafkatopic;
+
+        var kafkaHost = node.kafkahost, kafkaPort = node.kafkaport, kafkaTopic = node.kafkatopic;
+
+        log("Initialising on " + kafkaHost + ":" + kafkaPort);
+        var kafka = new Kafka({
+          clientId: 'kafka-publisher',
+          brokers: [kafkaHost + ':' + kafkaPort]
+        });
+        var producer = kafka.producer();
+
+        producer.connect();
+
+        node.on('input', function(msg) {
+            log("Sending message to " + kafkaTopic);
+            producer.send({
+              topic: kafkaTopic,
+              messages: [
+                { value: JSON.stringify(msg.payload) },
+              ],
+            });
+        });
+    }
+
+    function log(msg) {
+      console.log("kafka-publisher: " + msg);
+    }
+
+    RED.nodes.registerType("kafka-publisher", pushData);
+}
