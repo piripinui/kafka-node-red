@@ -19,15 +19,21 @@ module.exports = function(RED) {
         });
         var producer = kafka.producer();
 
-        producer.connect();
+        producer.connect()
+        .catch(e => console.error(`[example/producer] ${e.message}`, e));
 
         node.on('input', function(msg) {
             log("Sending message to " + kafkaTopic);
+
             producer.send({
               topic: kafkaTopic,
               messages: [
                 { value: JSON.stringify(msg.payload) },
               ],
+            })
+            .then(log)
+            .catch(e => {
+              node.error(e.message, msg);
             });
         });
     }

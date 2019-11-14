@@ -19,7 +19,10 @@ module.exports = function(RED) {
           brokers: [kafkaHost + ':' + kafkaPort]
         });
         var consumer = kafka.consumer({ groupId: groupId });
-        consumer.connect();
+
+        consumer.connect()
+        .catch(e => log(`${e.message}`, e));
+
         consumer.subscribe({ topic: kafkaTopic, fromBeginning: true });
         log("Listening to topic " + kafkaTopic);
 
@@ -34,7 +37,7 @@ module.exports = function(RED) {
               node.send(msg);
             }
             catch(error) {
-              log("Error: ", error, message.value);
+              node.error(error.message, msg);
             }
           }
         });
