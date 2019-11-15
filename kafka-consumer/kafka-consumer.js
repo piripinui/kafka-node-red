@@ -22,7 +22,7 @@ module.exports = function(RED) {
         kafkaConnectionTimeout = node.kafkaconnectiontimeout,
         kafkaRequestTimeout = node.kafkarequesttimeout;
 
-        log("Initialising on " + kafkaHost + ":" + kafkaPort);
+        logMessage("Initialising on " + kafkaHost + ":" + kafkaPort);
         var kafka = new Kafka({
           clientId: 'kafka-consumer',
           brokers: [kafkaHost + ':' + kafkaPort],
@@ -35,7 +35,7 @@ module.exports = function(RED) {
         consumer.connect()
 
         consumer.subscribe({ topic: kafkaTopic, fromBeginning: true });
-        log("Listening to topic " + kafkaTopic);
+        logMessage("Listening to topic " + kafkaTopic);
 
         consumer.run({
           eachMessage: async ({ topic, partition, message }) => {
@@ -44,7 +44,7 @@ module.exports = function(RED) {
             };
 
             try {
-              log("Received message ", msg);
+              logMessage("Received message ", msg);
               node.send(msg);
             }
             catch(error) {
@@ -75,7 +75,7 @@ module.exports = function(RED) {
       }
     }
 
-    function log(msg) {
+    function logMessage(msg) {
       console.log("kafka-consumer: " + msg);
     }
 
