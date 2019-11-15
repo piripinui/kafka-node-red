@@ -30,7 +30,7 @@ module.exports = function(RED) {
         producer.connect()
         .catch(e => console.error(`[example/producer] ${e.message}`, e));
 
-        node.on('input', function(msg) {
+        node.on('input', function(msg, send, done) {
             log("Sending message to " + kafkaTopic);
 
             producer.send({
@@ -42,7 +42,14 @@ module.exports = function(RED) {
             .then(log)
             .catch(e => {
               node.error(e.message, msg);
+              if (done) {
+                  done();
+              }
             });
+
+            if (done) {
+                done();
+            }
         });
     }
 
