@@ -1,10 +1,12 @@
 const { Kafka } = require('kafkajs');
 
 module.exports = function(RED) {
+    var node;
+
     function pushData(config) {
         RED.nodes.createNode(this, config);
 
-        var node = this;
+        node = this;
 
         node.kafkahost = config.kafkahost;
         node.kafkaport = config.kafkaport;
@@ -25,12 +27,12 @@ module.exports = function(RED) {
           clientId: 'kafka-consumer',
           brokers: [kafkaHost + ':' + kafkaPort],
           connectionTimeout: kafkaConnectionTimeout,
-          requestTimeout: kafkaRequestTimeout
+          requestTimeout: kafkaRequestTimeout,
+          logCreator: errorReporterCreator
         });
         var consumer = kafka.consumer({ groupId: groupId });
 
         consumer.connect()
-        .catch(e => log(`${e.message}`, e));
 
         consumer.subscribe({ topic: kafkaTopic, fromBeginning: true });
         log("Listening to topic " + kafkaTopic);
@@ -49,7 +51,28 @@ module.exports = function(RED) {
               node.error(error.message, msg);
             }
           }
-        });
+        })
+    }
+
+    const errorReporterCreator = logLevel =>  {
+      return function(info) {
+
+        switch(info.label) {
+          case 'ERROR':
+            logMessage(info.label + ": " + info.log.message);
+
+            node.error(info.log.message, {
+              payload:
+                {
+                  error: info
+                }
+            });
+            break;
+          default:
+            logMessage(info.label + ": " + info.log.message);
+            break;
+        }
+      }
     }
 
     function log(msg) {
