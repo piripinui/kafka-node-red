@@ -7,7 +7,9 @@
             kafkahost: { value: "localhost" },
             kafkaport: { value: "29092" },
             kafkatopic: { value: "mytopic" },
-            kafkagroupId: {  value: "test-group" }
+            kafkagroupId: {  value: "test-group" },
+            kafkaconnectiontimeout: { value: 1000 },
+            kafkarequesttimeout: { value: 30000 }
         },
         inputs:0,
         outputs:1,
@@ -38,6 +40,14 @@
     <div class="form-row">
         <label for="node-input-kafkagroupId"><i class="icon-tag"></i> Kafka Group ID</label>
         <input type="text" id="node-input-kafkagroupId" placeholder="test-group">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkaconnectiontimeout"><i class="icon-tag"></i> Kafka Connection Timeout (ms)</label>
+        <input type="number" id="node-input-kafkaconnectiontimeout" placeholder="1000">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkarequesttimeout"><i class="icon-tag"></i> Kafka Request Timeout (ms)</label>
+        <input type="number" id="node-input-kafkarequesttimeout" placeholder="30000">
     </div>
 </script>
 

@@ -6,7 +6,9 @@
             name: { value: "" },
             kafkahost: { value: "localhost" },
             kafkaport: { value: "29092" },
-            kafkatopic: { value: "mytopic" }
+            kafkatopic: { value: "mytopic" },
+            kafkaconnectiontimeout: { value: 1000 },
+            kafkarequesttimeout: { value: 30000 }
         },
         inputs:1,
         outputs:0,
@@ -33,6 +35,14 @@
     <div class="form-row">
         <label for="node-input-kafkatopic"><i class="icon-tag"></i> Kafka Topic</label>
         <input type="text" id="node-input-kafkatopic" placeholder="Kafka topic string">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkaconnectiontimeout"><i class="icon-tag"></i> Kafka Connection Timeout (ms)</label>
+        <input type="number" id="node-input-kafkaconnectiontimeout" placeholder="1000">
+    </div>
+    <div class="form-row">
+        <label for="node-input-kafkarequesttimeout"><i class="icon-tag"></i> Kafka Request Timeout (ms)</label>
+        <input type="number" id="node-input-kafkarequesttimeout" placeholder="30000">
     </div>
 </script>
 

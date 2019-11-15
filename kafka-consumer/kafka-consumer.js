@@ -10,13 +10,22 @@ module.exports = function(RED) {
         node.kafkaport = config.kafkaport;
         node.kafkatopic = config.kafkatopic;
         node.kafkagroupId = config.kafkagroupId;
+        node.kafkaconnectiontimeout = config.kafkaconnectiontimeout;
+        node.kafkarequesttimeout = config.kafkarequesttimeout;
 
-        var kafkaHost = node.kafkahost, kafkaPort = node.kafkaport, kafkaTopic = node.kafkatopic, groupId = node.kafkagroupId;
+        var kafkaHost = node.kafkahost,
+        kafkaPort = node.kafkaport,
+        kafkaTopic = node.kafkatopic,
+        groupId = node.kafkagroupId,
+        kafkaConnectionTimeout = node.kafkaconnectiontimeout,
+        kafkaRequestTimeout = node.kafkarequesttimeout;
 
         log("Initialising on " + kafkaHost + ":" + kafkaPort);
         var kafka = new Kafka({
           clientId: 'kafka-consumer',
-          brokers: [kafkaHost + ':' + kafkaPort]
+          brokers: [kafkaHost + ':' + kafkaPort],
+          connectionTimeout: kafkaConnectionTimeout,
+          requestTimeout: kafkaRequestTimeout
         });
         var consumer = kafka.consumer({ groupId: groupId });
 

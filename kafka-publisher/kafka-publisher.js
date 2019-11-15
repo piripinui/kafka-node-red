@@ -9,13 +9,21 @@ module.exports = function(RED) {
         node.kafkahost = config.kafkahost;
         node.kafkaport = config.kafkaport;
         node.kafkatopic = config.kafkatopic;
+        node.kafkaconnectiontimeout = config.kafkaconnectiontimeout;
+        node.kafkarequesttimeout = config.kafkarequesttimeout;
 
-        var kafkaHost = node.kafkahost, kafkaPort = node.kafkaport, kafkaTopic = node.kafkatopic;
+        var kafkaHost = node.kafkahost,
+        kafkaPort = node.kafkaport,
+        kafkaTopic = node.kafkatopic,
+        kafkaConnectionTimeout = node.kafkaconnectiontimeout,
+        kafkaRequestTimeout = node.kafkarequesttimeout;
 
         log("Initialising on " + kafkaHost + ":" + kafkaPort);
         var kafka = new Kafka({
           clientId: 'kafka-publisher',
-          brokers: [kafkaHost + ':' + kafkaPort]
+          brokers: [kafkaHost + ':' + kafkaPort],
+          connectionTimeout: kafkaConnectionTimeout,
+          requestTimeout: kafkaRequestTimeout
         });
         var producer = kafka.producer();
 
@@ -29,7 +37,7 @@ module.exports = function(RED) {
               topic: kafkaTopic,
               messages: [
                 { value: JSON.stringify(msg.payload) },
-              ],
+              ]
             })
             .then(log)
             .catch(e => {
