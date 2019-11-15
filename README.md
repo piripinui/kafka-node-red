@@ -16,4 +16,4 @@ Provides Kafka publisher and consumer node types for [Node-RED](https://nodered.
 
 ## uuid-injector
 
-This node creates a UUID and injects into the received message in the specified location using a JSON path string defined in the node's editor inside Node-RED.
+This node creates a UUID and uses it to update a defined property in the received message. The location of the property is described by a JSON path string defined in the node's editor inside Node-RED.
