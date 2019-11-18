@@ -76,7 +76,7 @@ module.exports = function(RED) {
     }
 
     function logMessage(msg) {
-      console.log("kafka-consumer: " + msg);
+      console.log("kafka-consumer: " + node.name + " : " + msg);
     }
 
     RED.nodes.registerType("kafka-consumer", pushData);

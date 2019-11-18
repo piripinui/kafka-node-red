@@ -70,7 +70,7 @@ module.exports = function(RED) {
     }
 
     function logMessage(msg) {
-      console.log("kafka-publisher: " + msg);
+      console.log("kafka-publisher: " + node.name + " : " + msg);
     }
 
     RED.nodes.registerType("kafka-publisher", pushData);
