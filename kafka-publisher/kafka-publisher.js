@@ -1,16 +1,40 @@
 const { Kafka } = require('kafkajs');
 
 module.exports = function(RED) {
-    var node;
-
     function pushData(config) {
+        const errorReporterCreator = logLevel =>  {
+          return function(info) {
+
+            switch(info.label) {
+              case 'ERROR':
+                logMessage(info.label + ": " + info.log.message);
+
+                node.error(info.log.message, {
+                  payload:
+                    {
+                      error: info
+                    }
+                });
+                break;
+              default:
+                logMessage(info.label + ": " + info.log.message);
+                break;
+            }
+          }
+        }
+
+        function logMessage(msg) {
+          console.log("kafka-publisher: " + node.name + " : " + msg);
+        }
+
         RED.nodes.createNode(this, config);
 
-        node = this;
+        var node = this;
 
         node.kafkahost = config.kafkahost;
         node.kafkaport = config.kafkaport;
         node.kafkatopic = config.kafkatopic;
+        node.kafkareplytopic = config.kafkareplytopic;
         node.kafkaconnectiontimeout = config.kafkaconnectiontimeout;
         node.kafkarequesttimeout = config.kafkarequesttimeout;
 
@@ -30,47 +54,37 @@ module.exports = function(RED) {
         });
         var producer = kafka.producer();
 
-        producer.connect()
+        const run = async() => {
+          await producer.connect()
 
-        node.on('input', function(msg, send, done) {
-            logMessage("Sending message to " + kafkaTopic);
-
-            producer.send({
-              topic: kafkaTopic,
-              messages: [
-                { value: JSON.stringify(msg.payload) },
-              ]
-            })
-
-            // if (done) {
-            //   done();
-            // }
-        });
-    }
-
-    const errorReporterCreator = logLevel =>  {
-      return function(info) {
-
-        switch(info.label) {
-          case 'ERROR':
-            logMessage(info.label + ": " + info.log.message);
-
-            node.error(info.log.message, {
-              payload:
-                {
-                  error: info
-                }
-            });
-            break;
-          default:
-            logMessage(info.label + ": " + info.log.message);
-            break;
+          node.on('input', function(msg, send, done) {
+              if (typeof node.kafkareplytopic == "undefined") {
+                logMessage("Sending message to " + kafkaTopic);
+                producer.send({
+                  topic: kafkaTopic,
+                  messages: [
+                    { value: JSON.stringify(msg.payload) }
+                  ]
+                })
+              }
+              else {
+                logMessage("Sending message to " + kafkaTopic + " - set reply topic to " + node.kafkareplytopic);
+                producer.send({
+                  topic: kafkaTopic,
+                  messages: [
+                    {
+                      value: JSON.stringify(msg.payload),
+                      headers: {
+                        'kafka_replyTopic': node.kafkareplytopic
+                      }
+                    }
+                  ]
+                })
+              }
+          });
         }
-      }
-    }
 
-    function logMessage(msg) {
-      console.log("kafka-publisher: " + node.name + " : " + msg);
+        run().catch(errorReporterCreator);
     }
 
     RED.nodes.registerType("kafka-publisher", pushData);

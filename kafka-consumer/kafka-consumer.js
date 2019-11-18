@@ -1,9 +1,34 @@
 const { Kafka } = require('kafkajs');
 
 module.exports = function(RED) {
-    var node;
-
     function pushData(config) {
+        var node;
+
+        const errorReporterCreator = logLevel =>  {
+          return function(info) {
+
+            switch(info.label) {
+              case 'ERROR':
+                logMessage(info.label + ": " + info.log.message);
+
+                node.error(info.log.message, {
+                  payload:
+                    {
+                      error: info
+                    }
+                });
+                break;
+              default:
+                logMessage(info.label + ": " + info.log.message);
+                break;
+            }
+          }
+        }
+
+        function logMessage(msg) {
+          console.log("kafka-consumer: " + node.name + " : " + msg);
+        }
+
         RED.nodes.createNode(this, config);
 
         node = this;
@@ -32,51 +57,30 @@ module.exports = function(RED) {
         });
         var consumer = kafka.consumer({ groupId: groupId });
 
-        consumer.connect()
+        const run = async() => {
+          await consumer.connect()
 
-        consumer.subscribe({ topic: kafkaTopic, fromBeginning: true });
-        logMessage("Listening to topic " + kafkaTopic);
+          await consumer.subscribe({ topic: kafkaTopic, fromBeginning: true });
+          logMessage("Listening to topic " + kafkaTopic);
 
-        consumer.run({
-          eachMessage: async ({ topic, partition, message }) => {
-            var msg = {
-              payload: JSON.parse(message.value)
-            };
+          await consumer.run({
+            eachMessage: async ({ topic, partition, message }) => {
+              var msg = {
+                payload: JSON.parse(message.value)
+              };
 
-            try {
-              logMessage("Received message ", msg);
-              node.send(msg);
+              try {
+                logMessage("Received message ", msg);
+                node.send(msg);
+              }
+              catch(error) {
+                node.error(error.message, msg);
+              }
             }
-            catch(error) {
-              node.error(error.message, msg);
-            }
-          }
-        })
-    }
-
-    const errorReporterCreator = logLevel =>  {
-      return function(info) {
-
-        switch(info.label) {
-          case 'ERROR':
-            logMessage(info.label + ": " + info.log.message);
-
-            node.error(info.log.message, {
-              payload:
-                {
-                  error: info
-                }
-            });
-            break;
-          default:
-            logMessage(info.label + ": " + info.log.message);
-            break;
+          })
         }
-      }
-    }
 
-    function logMessage(msg) {
-      console.log("kafka-consumer: " + node.name + " : " + msg);
+        run().catch(errorReporterCreator);
     }
 
     RED.nodes.registerType("kafka-consumer", pushData);
