@@ -70,8 +70,8 @@ module.exports = function(RED) {
               };
 
               try {
-                logMessage("Received message ", msg);
                 node.send(msg);
+                logMessage("Received message ", msg);
               }
               catch(error) {
                 node.error(error.message, msg);

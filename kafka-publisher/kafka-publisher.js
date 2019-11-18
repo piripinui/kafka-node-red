@@ -68,7 +68,6 @@ module.exports = function(RED) {
                 })
               }
               else {
-                logMessage("Sending message to " + kafkaTopic + " - set reply topic to " + node.kafkareplytopic);
                 producer.send({
                   topic: kafkaTopic,
                   messages: [
@@ -80,6 +79,8 @@ module.exports = function(RED) {
                     }
                   ]
                 })
+
+                logMessage("Sent message to " + kafkaTopic + " - set reply topic to " + node.kafkareplytopic);
               }
           });
         }
