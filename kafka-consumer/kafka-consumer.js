@@ -86,6 +86,11 @@ module.exports = function(RED) {
           })
         }
 
+        node.on('close', function() {
+          consumer.disconnect();
+          logger.info("Disconnecting from Kafka.");
+        });
+
         run().catch(errorReporterCreator);
     }
 
