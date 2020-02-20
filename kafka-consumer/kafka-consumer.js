@@ -76,10 +76,10 @@ module.exports = function(RED) {
 
               try {
                 node.send(msg);
-                logger.info("Received message: %s", msg);
+                logger.info("Received response, sent message: %s", msg);
               }
               catch(error) {
-                logger.error("Problem sending message to node: %s", error);
+                logger.error("Problem sending message to node: %s", error.message);
                 node.error(error.message, msg);
               }
             }
