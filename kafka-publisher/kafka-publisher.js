@@ -29,7 +29,7 @@ module.exports = function(RED) {
 
         RED.nodes.createNode(this, config);
 
-        var node = this;
+        let node = this;
 
         node.kafkahost = config.kafkahost;
         node.kafkaport = config.kafkaport;
@@ -38,7 +38,7 @@ module.exports = function(RED) {
         node.kafkaconnectiontimeout = config.kafkaconnectiontimeout;
         node.kafkarequesttimeout = config.kafkarequesttimeout;
 
-        var kafkaHost = node.kafkahost,
+        let kafkaHost = node.kafkahost,
         kafkaPort = node.kafkaport,
         kafkaTopic = node.kafkatopic,
         kafkaConnectionTimeout = node.kafkaconnectiontimeout,
@@ -52,12 +52,13 @@ module.exports = function(RED) {
           requestTimeout: kafkaRequestTimeout,
           logCreator: errorReporterCreator
         });
-        var producer = kafka.producer();
+        let producer = kafka.producer();
 
         const run = async() => {
           await producer.connect()
 
           node.on('input', function(msg, send, done) {
+              logMessage("Reply topic = ", node.kafkareplytopic);
               if (typeof node.kafkareplytopic == "undefined") {
                 logMessage("Sending message to " + kafkaTopic);
                 producer.send({

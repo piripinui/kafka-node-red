@@ -4,15 +4,15 @@ jsonpath = require('jsonpath');
 module.exports = function(RED) {
     function injectUUID(config) {
         RED.nodes.createNode(this, config);
-        var node = this;
+        let node = this;
 
         node.injectionpath = config.injectionpath;
 
         this.on('input', function(msg, send, done) {
             try {
-              var myUUID = uuidv1();
+              let myUUID = uuidv1();
 
-              var results = jsonpath.value(msg.payload, node.injectionpath, myUUID);
+              let results = jsonpath.value(msg.payload, node.injectionpath, myUUID);
 
               node.send(msg);
 

@@ -2,7 +2,7 @@ const { Kafka } = require('kafkajs');
 
 module.exports = function(RED) {
     function pushData(config) {
-        var node;
+        let node;
 
         const errorReporterCreator = logLevel =>  {
           return function(info) {
@@ -40,7 +40,7 @@ module.exports = function(RED) {
         node.kafkaconnectiontimeout = config.kafkaconnectiontimeout;
         node.kafkarequesttimeout = config.kafkarequesttimeout;
 
-        var kafkaHost = node.kafkahost,
+        let kafkaHost = node.kafkahost,
         kafkaPort = node.kafkaport,
         kafkaTopic = node.kafkatopic,
         groupId = node.kafkagroupId,
@@ -48,14 +48,14 @@ module.exports = function(RED) {
         kafkaRequestTimeout = node.kafkarequesttimeout;
 
         logMessage("Initialising on " + kafkaHost + ":" + kafkaPort);
-        var kafka = new Kafka({
+        let kafka = new Kafka({
           clientId: 'kafka-consumer',
           brokers: [kafkaHost + ':' + kafkaPort],
           connectionTimeout: kafkaConnectionTimeout,
           requestTimeout: kafkaRequestTimeout,
           logCreator: errorReporterCreator
         });
-        var consumer = kafka.consumer({ groupId: groupId });
+        let consumer = kafka.consumer({ groupId: groupId });
 
         const run = async() => {
           await consumer.connect()
@@ -65,7 +65,7 @@ module.exports = function(RED) {
 
           await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-              var msg = {
+              let msg = {
                 payload: JSON.parse(message.value)
               };
 
