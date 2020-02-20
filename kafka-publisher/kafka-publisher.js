@@ -63,7 +63,7 @@ module.exports = function(RED) {
           await producer.connect()
 
           node.on('input', function(msg, send, done) {
-              logger.info("Reply topic = %s", node.kafkareplytopic);
+              logger.info("Reply topic = <%s>", node.kafkareplytopic);
               if (typeof node.kafkareplytopic == "undefined") {
                 logger.info("Sending message to %s", kafkaTopic);
                 producer.send({
@@ -86,7 +86,7 @@ module.exports = function(RED) {
                   ]
                 })
 
-                logger.info("Sent message to " + kafkaTopic + " - set reply topic to " + node.kafkareplytopic);
+                logger.info("Sent message to %s - set reply topic to <%s>", kafkaTopic, node.kafkareplytopic);
               }
           });
         }
