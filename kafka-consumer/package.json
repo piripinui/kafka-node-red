@@ -9,6 +9,7 @@
   "author": "Phil Robinson",
   "license": "MIT",
   "dependencies": {
+    "bunyan": "^1.8.12",
     "kafkajs": "^1.11.0"
   },
   "node-red": {
