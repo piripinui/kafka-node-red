@@ -1,13 +1,26 @@
-const { Kafka } = require('kafkajs');
+const { Kafka } = require('kafkajs'),
+createLogger = require('./logger.js');
 
 module.exports = function(RED) {
     function pushData(config) {
-        const errorReporterCreator = logLevel =>  {
+      RED.nodes.createNode(this, config);
+
+      let node = this;
+
+      let loggerConfig = {
+        logger: {
+          name: process.env.LOGGER_NAME || 'kafka-publisher: ' + node.name,
+          level: process.env.LOGGER_LEVEL || 'info',
+        }
+      },
+      logger = createLogger(loggerConfig.logger);
+
+      const errorReporterCreator = logLevel =>  {
           return function(info) {
 
             switch(info.label) {
               case 'ERROR':
-                logMessage(info.label + ": " + info.log.message);
+                logger.error(info.label + ": " + info.log.message);
 
                 node.error(info.log.message, {
                   payload:
@@ -17,19 +30,11 @@ module.exports = function(RED) {
                 });
                 break;
               default:
-                logMessage(info.label + ": " + info.log.message);
+                logger.info(info.label + ": " + info.log.message);
                 break;
             }
           }
         }
-
-        function logMessage(msg) {
-          console.log("kafka-publisher: " + node.name + " : " + msg);
-        }
-
-        RED.nodes.createNode(this, config);
-
-        let node = this;
 
         node.kafkahost = config.kafkahost;
         node.kafkaport = config.kafkaport;
@@ -44,7 +49,7 @@ module.exports = function(RED) {
         kafkaConnectionTimeout = node.kafkaconnectiontimeout,
         kafkaRequestTimeout = node.kafkarequesttimeout;
 
-        logMessage("Initialising on " + kafkaHost + ":" + kafkaPort);
+        logger.info("Initialising on " + kafkaHost + ":" + kafkaPort);
         var kafka = new Kafka({
           clientId: 'kafka-publisher',
           brokers: [kafkaHost + ':' + kafkaPort],
@@ -58,9 +63,9 @@ module.exports = function(RED) {
           await producer.connect()
 
           node.on('input', function(msg, send, done) {
-              logMessage("Reply topic = ", node.kafkareplytopic);
+              logger.info("Reply topic = %s", node.kafkareplytopic);
               if (typeof node.kafkareplytopic == "undefined") {
-                logMessage("Sending message to " + kafkaTopic);
+                logger.info("Sending message to %s", kafkaTopic);
                 producer.send({
                   topic: kafkaTopic,
                   messages: [
@@ -81,7 +86,7 @@ module.exports = function(RED) {
                   ]
                 })
 
-                logMessage("Sent message to " + kafkaTopic + " - set reply topic to " + node.kafkareplytopic);
+                logger.info("Sent message to " + kafkaTopic + " - set reply topic to " + node.kafkareplytopic);
               }
           });
         }
